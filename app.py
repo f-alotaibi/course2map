@@ -16,11 +16,10 @@ def main():
 @app.post("/extract-classes")
 def extract_classes():
     inputValue = request.form["Input"]
-    val = ""
     try:
         val = extractClasses(inputValue)
-    except:
-        abort(422, "invalid input")
+    except Exception as e:
+        abort(422, e)
     return val
 
 if __name__ == '__main__':
