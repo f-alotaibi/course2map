@@ -1,4 +1,5 @@
 from flask import Flask, send_from_directory, render_template, request, abort
+from waitress import serve
 import os
 from image_extraction import extractClasses
 
@@ -28,4 +29,4 @@ if __name__ == '__main__':
     port = 80
     if os.getenv("PORT"):
         port = int(os.getenv("PORT"))
-    app.run(port=port)
+    serve(app, host="0.0.0.0", port=port)
