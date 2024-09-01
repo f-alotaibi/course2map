@@ -13,4 +13,5 @@ def parseText(text):
                 courses.append(coursesTemp)
                 coursesTemp = []
     coursesTemp.append(s)
+  courses.append(coursesTemp)
   return courses
