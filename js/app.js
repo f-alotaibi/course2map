@@ -8,7 +8,6 @@ function pollInput() {
     if (textarea.value == input || textarea.value == "") {
         return
     }
-    console.log("Sending", textarea.value)
     input = textarea.value
     outputarea.innerHTML = ``
     fetch("extract-classes", {
@@ -16,15 +15,18 @@ function pollInput() {
         body: new URLSearchParams({
             Input: input,
         })
-    }).then((response) => {
-        return response.text()
-    }).then((base64Img) => {
+    }).then(async (response) => {
+        return [response.ok, await response.text()]
+    }).then(([ok, txt]) => {
+        if (!ok) {
+            throw new Error(txt)
+        }
         let dom_img = document.createElement("img")
-        dom_img.src = `data:image/png;base64, ${base64Img}`
+        dom_img.src = `data:image/png;base64, ${txt}`
         dom_img.style = `width: 100%`
         outputarea.appendChild(dom_img)
     }).catch((err) => {
-        outputarea.innerHTML = `Error: ${err}`
+        outputarea.innerHTML = `${err}`
     })
 }
 
