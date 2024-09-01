@@ -42,8 +42,7 @@ def extractClassPlace(className):
 
 def extractClasses(input_text):
     floors = [{} for _ in range(3)]
-
-    courses = parser.parseText(input_text)
+    courses = parser.parseText(parser.chromeify(input_text))
     for course in courses:
         lecClass = lecture_class.LectureClass(course)
         for day, infoArray in lecClass.courseTimes.items():

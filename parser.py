@@ -17,3 +17,11 @@ def parseText(text):
     coursesTemp.append(s)
   courses.append(coursesTemp)
   return courses
+
+# a util function that just removes firefox whitespaces
+def chromeify(text):
+    textList = []
+    for t in text.split("\n"):
+      if t != '\t':
+        textList.append(t.replace('\t', ''))
+    return "\n".join(textList)
