@@ -1,5 +1,7 @@
 def parseText(text):
   text_list = text.split('\n')
+  if text_list[-1] == "":
+     text_list = text_list[:-1]
   courses = []
   coursesTemp = []
   for s in text_list:
