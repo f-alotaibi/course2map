@@ -1,0 +1,31 @@
+from flask import Flask, send_from_directory, render_template, request, abort
+import os
+from image_extraction import extractClasses
+
+app = Flask(__name__)
+
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('js', path)
+
+@app.route("/")
+def main():
+    return render_template('index.html')
+
+@app.post("/extract-classes")
+def extract_classes():
+    inputValue = request.form["Input"]
+    val = ""
+    try:
+        val = extractClasses(inputValue)
+    except:
+        abort(422, "invalid input")
+    return val
+
+if __name__ == '__main__':
+    if not os.path.exists(".cache"):
+        os.mkdir(".cache")
+    port = 80
+    if os.getenv("PORT"):
+        port = int(os.getenv("PORT"))
+    app.run(port=port)
