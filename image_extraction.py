@@ -7,17 +7,21 @@ import os
 import requests
 import base64
 
+cachedPositions = {}
+
 # https://en.wikipedia.org/wiki/List_of_file_signatures
 jpgHeader = bytes([0xff, 0xd8, 0xff])
 
 def extractClassPlace(className):
-    if not os.path.isfile(f".cache/{className}.jpg"):
-        r = requests.get(f"https://laamea.com/media/maps/046-{className}.jpg", headers={"Referer": "https://laamea.com/046-0-20", "Host": "laamea.com"})
-        if r.content[0:3] != jpgHeader:
-            raise Exception(f"Couldn't find image of classroom {className}")
-        open(f".cache/{className}.jpg", 'wb').write(r.content)
+    if className in cachedPositions:
+        return cachedPositions[className]
 
-    image = cv2.imread(f".cache/{className}.jpg")
+    r = requests.get(f"https://laamea.com/media/maps/046-{className}.jpg", headers={"Referer": "https://laamea.com/046-0-20", "Host": "laamea.com"})
+    if r.content[0:3] != jpgHeader:
+        raise Exception(f"Couldn't find image of classroom {className}")
+
+    r_nparr = np.frombuffer(r.content, np.uint8)
+    image = cv2.imdecode(r_nparr, cv2.IMREAD_UNCHANGED)
 
     # https://docs.opencv.org/4.x/d4/d70/tutorial_hough_circle.html
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -30,6 +34,7 @@ def extractClassPlace(className):
 
     circles = np.uint16(np.around(circles))
     for i in circles[0, :]:
+        cachedPositions[className] = (i[0], i[1])
         return (i[0], i[1])
 
 def extractClasses(input_text):

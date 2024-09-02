@@ -23,8 +23,6 @@ def extract_classes():
     return val
 
 if __name__ == '__main__':
-    if not os.path.exists(".cache"):
-        os.mkdir(".cache")
     port = 80
     if os.getenv("PORT"):
         port = int(os.getenv("PORT"))
