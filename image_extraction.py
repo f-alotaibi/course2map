@@ -19,26 +19,18 @@ def extractClassPlace(className):
 
     image = cv2.imread(f".cache/{className}.jpg")
 
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    lower = np.array([0, 100, 100], dtype="uint8")
-    upper = np.array([10, 255, 255], dtype="uint8")
+    # https://docs.opencv.org/4.x/d4/d70/tutorial_hough_circle.html
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.medianBlur(gray, 5)
+    rows = gray.shape[0]
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, rows / 8, param1=100, param2=30, minRadius=1, maxRadius=30)
 
-    mask = cv2.inRange(image, lower, upper)
+    if circles is None:
+        return (-1, -1)
 
-    cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    cnts = cnts[0] if len(cnts) == 2 else cnts[1]
-
-    for c in cnts:
-        perimeter = cv2.arcLength(c, True)
-        approx = cv2.approxPolyDP(c, 0.04 * perimeter, True)
-        if len(approx) != 7 and len(approx) != 8:
-            cv2.drawContours(mask, [c], -1, (0, 0, 0), -1)
-            continue
-        M = cv2.moments(c)
-        cX = int(M["m10"] / M["m00"])
-        cY = int(M["m01"] / M["m00"])
-        return cX, cY
-    return -1, -1
+    circles = np.uint16(np.around(circles))
+    for i in circles[0, :]:
+        return (i[0], i[1])
 
 def extractClasses(input_text):
     floors = [{} for _ in range(3)]
