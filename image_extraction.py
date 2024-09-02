@@ -59,11 +59,11 @@ def extractClasses(input_text):
                     if val == (-1, -1):
                         continue
                     floors[floor][lecRoom] = {
-                        "Text": f"Room no. {lecRoom}\n",
+                        "Text": f"Room no. {lecRoom}",
                         "Color": (random.randrange(0, 168), random.randrange(0, 168), random.randrange(0, 168)), # limit the colors to darker sides for a more clear text
                         "Placement": val,
                     }
-                floors[floor][lecRoom]["Text"] += f"{lecClass.code}-{day}-{time}\n"
+                floors[floor][lecRoom]["Text"] += f"\n{lecClass.code}-{day}-{time}"
 
     floorImages = []
     for floorNo in range(len(floors)):
@@ -87,9 +87,9 @@ def extractClasses(input_text):
                 else:
                     cv2.putText(original, line, (position[0] - 110, position[1] - 25 - (i * 14)), cv2.FONT_HERSHEY_COMPLEX, 0.45, color, 1, cv2.LINE_AA)
             if position[1] < 200:
-                cv2.putText(original, text_newLines_split[0], (position[0] - 35, position[1] + 25 + ((len(text_newLines_split) - 1) * 14)), cv2.FONT_HERSHEY_COMPLEX, 0.45, color, 1, cv2.LINE_AA)
+                cv2.putText(original, text_newLines_split[0], (position[0] - 35, position[1] + 25 + (len(text_newLines_split) * 14)), cv2.FONT_HERSHEY_COMPLEX, 0.45, color, 1, cv2.LINE_AA)
             else:
-                cv2.putText(original, text_newLines_split[0], (position[0] - 35, position[1] - 25 - ((len(text_newLines_split) - 1) * 14)), cv2.FONT_HERSHEY_COMPLEX, 0.45, color, 1, cv2.LINE_AA)
+                cv2.putText(original, text_newLines_split[0], (position[0] - 35, position[1] - 25 - (len(text_newLines_split) * 14)), cv2.FONT_HERSHEY_COMPLEX, 0.45, color, 1, cv2.LINE_AA)
         floorImages.append(original)
     floorImages.reverse()
     return base64.b64encode(cv2.imencode('.jpg', cv2.vconcat(floorImages))[1]).decode()
