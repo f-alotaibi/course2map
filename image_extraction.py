@@ -78,18 +78,13 @@ def extractClasses(input_text):
             text = info["Text"]
             cv2.circle(original, position, 12, color, -1)
             text_newLines_split = text.split("\n")
+            text_newLines_split[0], text_newLines_split[-1] = text_newLines_split[-1], text_newLines_split[0]
             for i, line in enumerate(text_newLines_split):
-                if i == 0:
-                    continue
                 line = line.replace("ص", "Mor").replace("م", "Eve")
                 if position[1] < 200:
                     cv2.putText(original, line, (position[0] - 110, position[1] + 25 + (i * 14)), cv2.FONT_HERSHEY_COMPLEX, 0.45, color, 1, cv2.LINE_AA)
                 else:
                     cv2.putText(original, line, (position[0] - 110, position[1] - 25 - (i * 14)), cv2.FONT_HERSHEY_COMPLEX, 0.45, color, 1, cv2.LINE_AA)
-            if position[1] < 200:
-                cv2.putText(original, text_newLines_split[0], (position[0] - 35, position[1] + 25 + (len(text_newLines_split) * 14)), cv2.FONT_HERSHEY_COMPLEX, 0.45, color, 1, cv2.LINE_AA)
-            else:
-                cv2.putText(original, text_newLines_split[0], (position[0] - 35, position[1] - 25 - (len(text_newLines_split) * 14)), cv2.FONT_HERSHEY_COMPLEX, 0.45, color, 1, cv2.LINE_AA)
         floorImages.append(original)
     floorImages.reverse()
     return base64.b64encode(cv2.imencode('.jpg', cv2.vconcat(floorImages))[1]).decode()
