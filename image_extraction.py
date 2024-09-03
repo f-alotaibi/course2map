@@ -22,20 +22,20 @@ def extractClassPlace(className):
 
     r_nparr = np.frombuffer(r.content, np.uint8)
     image = cv2.imdecode(r_nparr, cv2.IMREAD_UNCHANGED)
+    image = cv2.resize(image, (0, 0), fx=0.5, fy=0.5)
 
     # https://docs.opencv.org/4.x/d4/d70/tutorial_hough_circle.html
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.medianBlur(gray, 5)
-    rows = gray.shape[0]
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, rows / 8, param1=100, param2=30, minRadius=1, maxRadius=30)
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1 = 50, param2 = 30, minRadius = 0, maxRadius = 10)
 
     if circles is None:
         return (-1, -1)
 
     circles = np.uint16(np.around(circles))
     for i in circles[0, :]:
-        cachedPositions[className] = (i[0], i[1])
-        return (i[0], i[1])
+        cachedPositions[className] = (i[0] * 2, i[1] * 2)
+        return (i[0] * 2, i[1] * 2)
 
 def extractClasses(input_text):
     floors = [{} for _ in range(3)]
