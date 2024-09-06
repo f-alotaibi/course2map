@@ -3,9 +3,9 @@ import cv2
 import random
 import parser
 import lecture_class
-import os
 import requests
 import base64
+from concurrent.futures import ThreadPoolExecutor
 
 cachedPositions = {}
 
@@ -13,9 +13,6 @@ cachedPositions = {}
 jpgHeader = bytes([0xff, 0xd8, 0xff])
 
 def extractClassPlace(className):
-    if className in cachedPositions:
-        return cachedPositions[className]
-
     r = requests.get(f"https://laamea.com/media/maps/046-{className}.jpg", headers={"Referer": "https://laamea.com/046-0-20", "Host": "laamea.com"})
     if r.content[0:3] != jpgHeader:
         raise Exception(f"Couldn't find image of classroom {className}")
@@ -49,18 +46,25 @@ def extractClasses(input_text):
                 floor = place["Floor"]
                 lecRoom = place["Room"]
                 if lecRoom not in floors[floor]:
-                    try:
-                        val = extractClassPlace(f"{floor}-{lecRoom}")
-                    except Exception as e:
-                        raise e
-                    if val == (-1, -1):
-                        continue
                     floors[floor][lecRoom] = {
                         "Text": f"Room no. {lecRoom}",
                         "Color": (random.randrange(0, 168), random.randrange(0, 168), random.randrange(0, 168)), # limit the colors to darker sides for a more clear text
-                        "Placement": val,
                     }
                 floors[floor][lecRoom]["Text"] += f"\n{lecClass.code}-{day}-{time}"
+    with ThreadPoolExecutor() as executor:
+        for floorNo, floor in enumerate(floors):
+            for lecRoom in floor.keys():
+                if f"{floorNo}-{lecRoom}" in cachedPositions:
+                    continue
+                def run():
+                    try:
+                        val = extractClassPlace(f"{floorNo}-{lecRoom}")
+                        if val == (-1, -1):
+                            raise Exception(f"{floorNo}-{lecRoom} not found")
+                    except Exception as e:
+                        raise e
+                executor.submit(run)
+        executor.shutdown(wait=True)
 
     floorImages = []
     for floorNo in range(len(floors)):
@@ -69,8 +73,8 @@ def extractClasses(input_text):
             continue
         floorImage = cv2.imread(f"{floorNo}_floor.jpg")
         original = floorImage.copy()
-        for info in floor.values():
-            position = info["Placement"]
+        for lecRoom, info in floor.items():
+            position = cachedPositions[f"{floorNo}-{lecRoom}"]
             color = info["Color"]
             text = info["Text"]
             cv2.circle(original, position, 12, color, -1)
