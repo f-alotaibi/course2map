@@ -13,7 +13,7 @@ cachedPositions = {}
 jpgHeader = bytes([0xff, 0xd8, 0xff])
 
 def extractClassPlace(className):
-    r = requests.get(f"https://laamea.com/media/maps/046-{className}.jpg", headers={"Referer": "https://laamea.com/046-0-20", "Host": "laamea.com"})
+    r = requests.get(f"https://api.laamea.com/storage/images/046-{className}.jpg", headers={"Referer": "https://laamea.com/046-0-20", "Host": "api.laamea.com"})
     if r.content[0:3] != jpgHeader:
         raise Exception(f"Couldn't find image of classroom {className}")
 
