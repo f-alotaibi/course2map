@@ -27,8 +27,7 @@ def extractClassPlace(className):
     # https://docs.opencv.org/4.x/d4/d70/tutorial_hough_circle.html
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.medianBlur(gray, 5)
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1 = 50, param2 = 30, minRadius = 0, maxRadius = 10)
-
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 10, param1 = 40, param2 = 20, minRadius = 0, maxRadius = 30)
     if circles is None:
         return (-1, -1)
 
