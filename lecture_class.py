@@ -12,11 +12,17 @@ class LectureClass:
             place = "".join(courseTimes[i+2].strip()[5:].split(" ")).split("-")
             if courseTimes[i] not in self.courseTimes:
                 self.courseTimes[courseTimes[i]] = []
-            self.courseTimes[courseTimes[i]].append({
-                "Time": courseTimes[i+1],
-                "Place": {
-                    "Floor": int(place[0]),
-                    "Room": place[1],
-                },
-            })
+            try:
+                int(place[0])
+                self.courseTimes[courseTimes[i]].append({
+                    "Time": courseTimes[i+1],
+                    "Place": {
+                        "Floor": int(place[0]),
+                        "Room": place[1],
+                    },
+                })
+            except ValueError:
+                self.courseTimes[courseTimes[i]].append({
+                    "Time": courseTimes[i+1],
+                })
             i = i + 3

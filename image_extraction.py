@@ -41,6 +41,8 @@ def extractClasses(input_text):
         lecClass = lecture_class.LectureClass(course)
         for day, infoArray in lecClass.courseTimes.items():
             for info in infoArray:
+                if "Place" not in info.keys():
+                    continue
                 time = info["Time"]
                 place = info["Place"]
                 floor = place["Floor"]
