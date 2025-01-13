@@ -20,6 +20,9 @@ def extractClassPlace(className):
     r_nparr = np.frombuffer(r.content, np.uint8)
     image = cv2.imdecode(r_nparr, cv2.IMREAD_UNCHANGED)
     image = cv2.resize(image, (0, 0), fx=0.5, fy=0.5)
+    h, w = image.shape[:2]
+    ch, cw = (int(h/2), int(w/2))
+    cv2.circle(image, (cw, ch), 52, (255, 255, 255), -1)
 
     # https://docs.opencv.org/4.x/d4/d70/tutorial_hough_circle.html
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
