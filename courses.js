@@ -89,9 +89,9 @@ function runCanvas(courses) {
                 for (const [i, line] of Object.entries(courses[floor][room]["Text"].split("\n"))) {
                     ctx.font = "16px sans-serif"
                     if (Y < 200) {
-                        ctx.fillText(line, X - 80 ,currentY + Y + 30 + (16 * i));
+                        ctx.fillText(line, X - 130 ,currentY + Y + 30 + (16 * i));
                     } else {
-                        ctx.fillText(line, X - 80 ,currentY + Y - 20 - (16 * i));
+                        ctx.fillText(line, X - 130 ,currentY + Y - 20 - (16 * i));
                     }
                 }
             }
